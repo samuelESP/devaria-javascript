@@ -1,32 +1,20 @@
 const divs = $('div');
 
-const H1s = $('h1');
-
-const titulo = $("#titulo");
-
-const novaClasse = $(".font-weight-normal");
-
-const entrada = $("input");
-
-const texto = $("#textoAlt");
-
-function alterarHTML() {
-    titulo.text("Novo Titulo, depois de manipular o DOM");
-
-    divs.eq(0).css('color', '#fff'); // Como ele me retorna duas divs eu preciso especificar qual delas eu quero usar, no caso é a primeira
-
-    texto.text(entrada.val());
+const classeAlterada = $('.bg-info');
+  
+const entrada = $('input');
+function clicaNobtn(){
+    divs.eq(0).css('color', '#fff');
+    // eq(NUMERO) representa qual item do meu jquery eu quero usar, por exemplo, eu tenho 2 itens com a mesma classe selecionados, porém eu so quero usar o pirmeiro dele, logo eu uso o .eq(0)
+    classeAlterada.eq(1).text(entrada.val());
     entrada.val('');
-    
-    for(let elemento of novaClasse){
 
-    $(elemento).removeClass('font-weight-normal').addClass('font-weight-bold');
+    for (let elemento of classeAlterada){
+        $(elemento).removeClass('bg-info').addClass('bg-success')
     }
 
     const novoP = document.createElement('p');
-    novoP.textContent = "Novo Texto adicionado";
-
-    texto.after(novoP);
-    
-    
+    novoP.textContent = "Novo Paragrafo criado";
+    // last() seleciona o ultimo elemento do meu jquery
+    classeAlterada.last().after(novoP);
 }
