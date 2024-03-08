@@ -1,29 +1,56 @@
+// Pagina dos Formularos
 const $stepOne = $('.step.one');
 const $stepTwo = $('.step.two');
 const $stepThree = $('.step.three');
 
+// Repetição de texto para cada formulario
 const $stepText = $('#step-text');
 const $stepDescription = $('#step-description');
+const $mainTitle = $('#title');
 
-
+// inputs dos Forms (1)
 const $inputNome = $('#nome');
 const $inputSobrenome = $('#sobrenome');
 const $inputDataNascimento = $('#dataNascimento');
 const $inputEmail = $('#email');
 const $inputMinibio = $('#minibio');
 
+// inputs dos Forms (2)
+const $inputEndereco = $('#endereco');
+const $inputComplemento = $('#complemento');
+const $inputCidade = $('#cidade');
+const $inputCep = $('#cep');
 
+
+// inputs dos Forms (3)
+const $inputHabilidades = $('#habilidades');
+const $inputPontosForte = $('#pontosForte');
+
+// Botões 
 const $containerBtnFormOne = $('#containerBtnFormOne');
+const $containerBtnFormTwo = $('#containerBtnFormTwo');
+const $containerBtnFormThree = $('#containerBtnFormThree');
 const $btnFormOne = $('#btnFormOne');
+const $btnFormTwo = $('#btnFormTwo');
+const $btnFormThree = $('#btnFormThree');
 
-
+// variáveis fixas
 const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/; 
+const cepRegex = /^([\d]{2})([\d]{3})([\d]{3})|^[\d]{2}.[\d]{3}-[\d]{3}/;
 const minLength = 2;
+const minLengthTextArea = 10;
 
+//  Validadores
 let nomeValido = false;
 let sobrenomeValido = false;
 let emailValido = false;
 let dataNascimentoValido = false;
+let enderecoValido = false;
+let cidadeValido = false;
+let CepValido = false;
+let habilidadesValido = false;
+let pontosFortesValido = false;
+
 
 
 // Inicio..........Função de validação dos inputs.................
@@ -46,33 +73,116 @@ function validaInput(element, minLength, maxlength, regex) {
 
 // Inicio..........Função de validação do Form para a liberação do BTN.................
 
+// ...........Forms liberar botão(1)
 function validaFormOne() {
     if (nomeValido && sobrenomeValido && emailValido && dataNascimentoValido) {
         $containerBtnFormOne.removeClass('disabled');
         $btnFormOne.removeClass('disabled');
+        $btnFormOne.off('click').on('click', iniciarPasso2)
     } else {
         $containerBtnFormOne.addClass('disabled');
         $btnFormOne.addClass('disabled');
+        $btnFormOne.off('click');
     }
 }
 
+// ...........Liberar Forms2 e esconder Forms1
+function iniciarPasso2(){
+    $stepText.text('Passo 2 de 3 - Dados de correspondência');
+    $stepDescription.text('Precisamos desses dados para que possamos entrar em contato.');
+    $stepTwo.show();
+    $stepOne.hide();
+
+// Inicio..........Validações dos inputs Forms (2).................
+    $inputEndereco.keyup(function () {
+        enderecoValido = validaInput(this, minLengthTextArea);
+        validaFormTwo();
+    });
+    $inputCidade.keyup(function () {
+        cidadeValido = validaInput(this, minLength);
+        validaFormTwo();
+    });
+    $inputCep.keyup(function(){
+        this.value = this.value.replace(/\D/g,'');
+        CepValido = validaInput(this, null, null, cepRegex);
+        if(CepValido){
+            this.value = this.value.replace(cepRegex, "$1.$2-$3");
+        }
+        validaFormTwo();
+    })
+    $inputComplemento.keyup(function(){
+        validaFormTwo();
+    })
+// Fim..........Validações dos inputs Forms (1).................
+}
+
+// Inicio...........Forms liberar botão(2)
+function validaFormTwo() {
+    if (CepValido && enderecoValido && cidadeValido ) {
+        $containerBtnFormTwo.removeClass('disabled');
+        $btnFormTwo.removeClass('disabled');
+        $btnFormTwo.off('click').on('click', iniciarPasso3)
+    } else {
+        $containerBtnFormTwo.addClass('disabled');
+        $btnFormTwo.addClass('disabled');
+        $btnFormTwo.off('click');
+    }
+}
 // Fim..........Função de validação do Form para a liberação do BTN.................
 
+// Liberar Forms 3 e esconder Forms 2
+function iniciarPasso3() {
+    $stepText.text('Passo 3 de 3 - Dados de correspondência');
+    $stepDescription.text('Não economize palavras, aqui é onde você pode se destacar.');
+    $stepThree.show();
+    $stepTwo.hide();
+
+// Inicio..........Validações dos inputs Forms (3).................
+$inputHabilidades.keyup(function(){
+    habilidadesValido = validaInput(this, minLengthTextArea);
+    validaFormThree();
+})
+$inputPontosForte.keyup(function(){
+    pontosFortesValido = validaInput(this, minLengthTextArea);
+    validaFormThree();
+})
+// Fim..........Validações dos inputs Forms (3).................
+}
+
+// Inicio...........Forms liberar botão(3)
+function validaFormThree() {
+    if (habilidadesValido && pontosFortesValido) {
+        $containerBtnFormThree.removeClass('disabled');
+        $btnFormThree.removeClass('disabled');
+        $btnFormThree.off('click').on('click', finalizaFormulario)
+    } else {
+        $containerBtnFormThree.addClass('disabled');
+        $btnFormThree.addClass('disabled');
+        $btnFormThree.off('click');
+    }
+}
+// Fim..........Função de validação do Form para a liberação do BTN.................
+
+// Finalizar o Forms
+function finalizaFormulario() {
+    $stepThree.hide();
+    $stepDescription.hide();
+    $mainTitle.text('Muito obrigado pela sua inscrição!');
+    $stepText.text('Entraremos em contato assim que possível, nosso prazo médio de resposta é de 5 dias. Fique atento na sua caixa de email.');
+}
+
+
+// ...........Liberar Forms1 e esconder Forms2 e Forms2
 function init(){
 
-    // .hide() -> usado para esconder o arquivo, como se fosse um displau:none
     $stepTwo.hide();
     $stepThree.hide();
 
     $stepText.text("Passo 1 de 3 - Dados pessoais");
     $stepDescription.text("Descreva seus dados para que possamos te conhecer melhor");
 
-
-// Inicio..........Validações dos inputs.................
-    
-// keyup -> Ao levantar a tecla
+// Inicio..........Validações dos inputs Forms (1).................
     $inputNome.keyup(function() {
-        // .closest -> indica o elemento mais proximo do que eu quero
         nomeValido = validaInput(this, minLength);
         validaFormOne()
     });
@@ -95,9 +205,6 @@ function init(){
     $inputMinibio.keyup(function () {
         validaFormOne()
     });
-    
-
-
 // Fim..........Validações dos inputs.................
 
 // Inicio..........Troca de tipo da Data de Nascimento.................
