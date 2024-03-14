@@ -154,7 +154,7 @@ function validaFormThree() {
     if (habilidadesValido && pontosFortesValido) {
         $containerBtnFormThree.removeClass('disabled');
         $btnFormThree.removeClass('disabled');
-        $btnFormThree.off('click').on('click', finalizaFormulario)
+        $btnFormThree.off('click').on('click', salvarNoTrello)
     } else {
         $containerBtnFormThree.addClass('disabled');
         $btnFormThree.addClass('disabled');
@@ -170,6 +170,63 @@ function finalizaFormulario() {
     $mainTitle.text('Muito obrigado pela sua inscrição!');
     $stepText.text('Entraremos em contato assim que possível, nosso prazo médio de resposta é de 5 dias. Fique atento na sua caixa de email.');
 }
+
+
+async function salvarNoTrello() {
+    try {
+        const nome = $inputNome.val();
+        const sobrenome = $inputSobrenome.val();
+        const email = $inputEmail.val();
+        const dataNascimento = $inputDataNascimento.val();
+        const minibio = $inputMinibio.val();
+        const endereco = $inputEndereco.val();
+        const complemento = $inputComplemento.val();
+        const cidade = $inputCidade.val();
+        const cep = $inputCep.val();
+        const habilidades = $inputHabilidades.val();
+        const pontosForte = $inputPontosForte.val();
+        if (!nome || !sobrenome || !email
+        || !dataNascimento || !endereco
+        || !cidade || !cep
+        || !habilidades || !pontosForte) {
+            return alert('Favor preencher todos os dados para seguir');
+        }
+
+        const body = {
+            name: 'Formulário de candidatura - ' + nome,
+            desc: `Seguem dados do candidato:
+            
+            ------------------- Dados pessoais ------------
+            Nome: ${nome}
+            Sobrenome: ${sobrenome}
+            Email: ${email}
+            Data nascimento: ${dataNascimento}
+            Minibio: ${minibio}
+            ------------------- Dados de endereco ------------
+            Endereço: ${endereco}
+            Complemento: ${complemento}
+            Cidade: ${cidade}
+            CEP: ${cep}
+            ------------------- Dados do candidato ------------
+            Habilidades: ${habilidades}
+            Pontos Fortes: ${pontosForte}
+            `
+        }
+
+        await fetch('https://api.trello.com/1/cards?idList=65ebdc95d0658dc01030770e&key=de69300cad9878db12c1f0b82e0c0f67&token=ATTA1f2640e9535a37933a09da2d825bb254b86b5a95d2438c54c3fea9d0dd81c8a0F4EBE78E', {
+        method : 'POST',
+        headers : {
+            "Content-type": "application/json"
+        },
+        body : JSON.stringify(body)
+        });
+        return finalizaFormulario();
+    } catch (e) {
+        console.log('Ocorreu erro ao salvar no Trello:', e);
+    }
+}
+
+
 
 
 // ...........Liberar Forms1 e esconder Forms2 e Forms2
